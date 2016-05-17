@@ -33,6 +33,7 @@ function dataReducer(state: DataState = {monthOverviews: []}, action: Action): D
     }
 }
 
+// Handles the array of months, if a single action should be taken on a month, it delegates the action to the montOverviewReducer
 function monthOverviewsReducer(state: Array<MonthOverview> = [], action: Action): Array<MonthOverview> {
     switch (action.type) {
         case ADD_MONTH_OVERVIEW:
@@ -40,6 +41,7 @@ function monthOverviewsReducer(state: Array<MonthOverview> = [], action: Action)
         case ADD_APPOINTMENT:
         case UPDATE_APPOINTMENT:
         case REMOVE_APPOINTMENT:
+            // could be a pattern right here? Check if the monthOverview exists, if it does, create a new one, otherwise switch the reference in the array
             let monthOverview = state.filter((monthOverview: MonthOverview) =>
                 monthOverview.month === action.payload.day.month && monthOverview.year === action.payload.day.year
             )[0];
@@ -63,28 +65,9 @@ function monthOverviewsReducer(state: Array<MonthOverview> = [], action: Action)
 function monthOverviewReducer(state: MonthOverview, action: Action): MonthOverview {
     switch (action.type) {
         case ADD_APPOINTMENT:
-            //TODO: introduce a dayReducer instead of days
-            state.daysWithAppointments = dayWithAppointmentsReducer(state.daysWithAppointments, action);
-            return state;
         case UPDATE_APPOINTMENT:
         case REMOVE_APPOINTMENT:
-            // let match = state.daysWithAppointments.filter((item: DayWithAppointments) =>
-            //     item.day.day === action.payload.day.day).length > 0;
-            // if (!match) {
-            //     let newItem = new DayWithAppointments(action.payload.day, [action.payload.appointment]);
-            //     return Object.assign({}, state, {
-            //         daysWithAppointments: [...state.daysWithAppointments, newItem]
-            //     });
-            // } else {
-            //     return Object.assign({}, state, {
-            //         daysWithAppointments: state.daysWithAppointments.map((item: DayWithAppointments) => {
-            //             if (item.day.day === action.payload.day.day) {
-            //                 return dayWithAppointmentsReducer(item, action);
-            //             }
-            //             return item;
-            //         })
-            //     });
-            // }
+            state.daysWithAppointments = dayWithAppointmentsReducer(state.daysWithAppointments, action);
             return state;
         default:
             return state;
@@ -96,6 +79,7 @@ function dayWithAppointmentsReducer(state: Array<DayWithAppointments> = [], acti
         case REMOVE_APPOINTMENT:
         case ADD_APPOINTMENT:
         case UPDATE_APPOINTMENT:
+            // could be a pattern right here? Check if the dayWithAppointments exists, if it does, create a new one, otherwise switch the reference in the array
             let dayWithAppointment = state.filter((dayWithAppointments: DayWithAppointments) =>
                 dayWithAppointments.day.day === action.payload.day.day
             )[0];
@@ -114,7 +98,7 @@ function dayWithAppointmentsReducer(state: Array<DayWithAppointments> = [], acti
     }
 }
 
-
+// Every change to the events for a day are handled here.
 function dayWithAppointmentReducer(state: DayWithAppointments, action: Action): DayWithAppointments {
     switch (action.type) {
         case REMOVE_APPOINTMENT:
