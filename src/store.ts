@@ -45,10 +45,14 @@ function monthOverviewsReducer(state: Array<MonthOverview> = [], action: Action)
             )[0];
             if (!monthOverview) {
                 monthOverview = new MonthOverview(action.payload.day.year, action.payload.day.month, []);
+                return [...state,
+                    monthOverviewReducer(monthOverview, action)];
             }
-            return [...state.slice(0, state.indexOf(monthOverview)),
-                monthOverviewReducer(monthOverview, action),
-                ...state.slice(state.indexOf(monthOverview) + 1, state.length)];
+            else {
+                return [...state.slice(0, state.indexOf(monthOverview)),
+                    monthOverviewReducer(monthOverview, action),
+                    ...state.slice(state.indexOf(monthOverview) + 1, state.length)];
+            }
         default:
             return state;
 
@@ -59,35 +63,59 @@ function monthOverviewsReducer(state: Array<MonthOverview> = [], action: Action)
 function monthOverviewReducer(state: MonthOverview, action: Action): MonthOverview {
     switch (action.type) {
         case ADD_APPOINTMENT:
+            //TODO: introduce a dayReducer instead of days
+            state.daysWithAppointments = dayWithAppointmentsReducer(state.daysWithAppointments, action);
+            return state;
         case UPDATE_APPOINTMENT:
         case REMOVE_APPOINTMENT:
-            if (state.month === action.payload.day.month && state.year === action.payload.day.year) {
-                let match = state.daysWithAppointments.filter((item: DayWithAppointments) =>
-                    item.day.day === action.payload.day.day).length > 0;
-                if (!match) {
-                    let newItem = new DayWithAppointments(action.payload.day, [action.payload.appointment]);
-                    return Object.assign({}, state, {
-                        daysWithAppointments: [...state.daysWithAppointments, newItem]
-                    });
-                } else {
-                    return Object.assign({}, state, {
-                        daysWithAppointments: state.daysWithAppointments.map((item: DayWithAppointments) => {
-                            if (item.day.day === action.payload.day.day) {
-                                return dayWithAppointmentsReducer(item, action);
-                            }
-                            return item;
-                        })
-                    });
-                }
-            }
+            // let match = state.daysWithAppointments.filter((item: DayWithAppointments) =>
+            //     item.day.day === action.payload.day.day).length > 0;
+            // if (!match) {
+            //     let newItem = new DayWithAppointments(action.payload.day, [action.payload.appointment]);
+            //     return Object.assign({}, state, {
+            //         daysWithAppointments: [...state.daysWithAppointments, newItem]
+            //     });
+            // } else {
+            //     return Object.assign({}, state, {
+            //         daysWithAppointments: state.daysWithAppointments.map((item: DayWithAppointments) => {
+            //             if (item.day.day === action.payload.day.day) {
+            //                 return dayWithAppointmentsReducer(item, action);
+            //             }
+            //             return item;
+            //         })
+            //     });
+            // }
             return state;
         default:
             return state;
-
     }
 }
 
-function dayWithAppointmentsReducer(state: DayWithAppointments, action: Action): DayWithAppointments {
+function dayWithAppointmentsReducer(state: Array<DayWithAppointments> = [], action: Action): Array<DayWithAppointments> {
+    switch (action.type) {
+        case REMOVE_APPOINTMENT:
+        case ADD_APPOINTMENT:
+        case UPDATE_APPOINTMENT:
+            let dayWithAppointment = state.filter((dayWithAppointments: DayWithAppointments) =>
+                dayWithAppointments.day.day === action.payload.day.day
+            )[0];
+            if (!dayWithAppointment) {
+                dayWithAppointment = new DayWithAppointments(action.payload.day, []);
+                return [...state,
+                    dayWithAppointmentReducer(dayWithAppointment, action)];
+            }
+            else {
+                return [...state.slice(0, state.indexOf(dayWithAppointment)),
+                    dayWithAppointmentReducer(dayWithAppointment, action),
+                    ...state.slice(state.indexOf(dayWithAppointment) + 1, state.length)];
+            }
+        default:
+            return state;
+    }
+}
+
+
+function dayWithAppointmentReducer(state: DayWithAppointments, action: Action): DayWithAppointments {
     switch (action.type) {
         case REMOVE_APPOINTMENT:
             return {
