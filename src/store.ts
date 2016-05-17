@@ -40,28 +40,47 @@ function monthOverviewsReducer(state: Array<MonthOverview> = [], action: Action)
         case ADD_APPOINTMENT:
         case UPDATE_APPOINTMENT:
         case REMOVE_APPOINTMENT:
-            return state.map((monthOverview: MonthOverview) => {
-                if (monthOverview.month === action.payload.day.month && monthOverview.year === action.payload.day.year) {
-                    let match = monthOverview.daysWithAppointments.filter((item: DayWithAppointments) =>
-                        item.day.day === action.payload.day.day).length > 0;
-                    if (!match) {
-                        let newItem = new DayWithAppointments(action.payload.day, [action.payload.appointment]);
-                        return Object.assign({}, monthOverview, {
-                            daysWithAppointments: [...monthOverview.daysWithAppointments, newItem]
-                        });
-                    } else {
-                        return Object.assign({}, monthOverview, {
-                            daysWithAppointments: monthOverview.daysWithAppointments.map((item: DayWithAppointments) => {
-                                if (item.day.day === action.payload.day.day) {
-                                    return dayWithAppointmentsReducer(item, action);
-                                }
-                                return item;
-                            })
-                        });
-                    }
+            let monthOverview = state.filter((monthOverview: MonthOverview) =>
+                monthOverview.month === action.payload.day.month && monthOverview.year === action.payload.day.year
+            )[0];
+            if (!monthOverview) {
+                monthOverview = new MonthOverview(action.payload.day.year, action.payload.day.month, []);
+            }
+            return [...state.slice(0, state.indexOf(monthOverview)),
+                monthOverviewReducer(monthOverview, action),
+                ...state.slice(state.indexOf(monthOverview) + 1, state.length)];
+        default:
+            return state;
+
+    }
+}
+
+
+function monthOverviewReducer(state: MonthOverview, action: Action): MonthOverview {
+    switch (action.type) {
+        case ADD_APPOINTMENT:
+        case UPDATE_APPOINTMENT:
+        case REMOVE_APPOINTMENT:
+            if (state.month === action.payload.day.month && state.year === action.payload.day.year) {
+                let match = state.daysWithAppointments.filter((item: DayWithAppointments) =>
+                    item.day.day === action.payload.day.day).length > 0;
+                if (!match) {
+                    let newItem = new DayWithAppointments(action.payload.day, [action.payload.appointment]);
+                    return Object.assign({}, state, {
+                        daysWithAppointments: [...state.daysWithAppointments, newItem]
+                    });
+                } else {
+                    return Object.assign({}, state, {
+                        daysWithAppointments: state.daysWithAppointments.map((item: DayWithAppointments) => {
+                            if (item.day.day === action.payload.day.day) {
+                                return dayWithAppointmentsReducer(item, action);
+                            }
+                            return item;
+                        })
+                    });
                 }
-                return monthOverview;
-            });
+            }
+            return state;
         default:
             return state;
 
