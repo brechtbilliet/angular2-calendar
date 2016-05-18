@@ -1,16 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Store} from "@ngrx/store";
-import {State, MonthOverview, Appointment, DayWithAppointments} from "../stateTypes";
-import {
-    setSelectedMonth,
-    addMonthOverview,
-    setViewMode,
-    addAppointment,
-    removeAppointment,
-    updateAppointment,
-    setSelectedWeek,
-    setSelectedDay
-} from "../actions";
+import {State, MonthOverview, Appointment} from "../stateTypes";
+import {setSelectedMonth, setViewMode, addAppointment, removeAppointment, updateAppointment, setSelectedWeek, setSelectedDay} from "../actions";
 import * as moment from "moment";
 import {ViewMode} from "../enums";
 
@@ -91,9 +82,10 @@ export class CalendarModel {
                 return overview.year === appointmentMoment.year() && overview.month === appointmentMoment.month();
             }).length > 0;
         if (!monthOverviewExists) {
-            let dayWithAppointments = new DayWithAppointments(day, [appointment]);
-            let monthOverview = new MonthOverview(day.year, day.month, [dayWithAppointments]);
-            this.store.dispatch(addMonthOverview(monthOverview));
+            // let dayWithAppointments = new DayWithAppointments(day, [appointment]);
+            // let monthOverview = new MonthOverview(day.year, day.month, [dayWithAppointments]);
+            // this.store.dispatch(addMonthOverview(monthOverview));
+            this.store.dispatch(addAppointment(appointment, day));
         } else {
             this.store.dispatch(addAppointment(appointment, day));
         }

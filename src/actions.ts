@@ -1,5 +1,5 @@
 import {Action} from "@ngrx/store";
-import {Appointment, MonthOverview, Day} from "./stateTypes";
+import {Appointment, Day} from "./stateTypes";
 import {MonthOfYear, ViewMode} from "./enums";
 
 export const SET_VIEWMODE = "application:SET_VIEWMODE";
@@ -12,13 +12,6 @@ export const SET_APPOINTMENTS_FOR_MONTH = "data:months:SET_APPOINTMENTS_FOR_MONT
 export const ADD_APPOINTMENT = "data:months:ADD_APPOINTMENT";
 export const REMOVE_APPOINTMENT = "data:months:REMOVE_APPOINTMENT";
 export const UPDATE_APPOINTMENT = "data:months:UPDATE_APPOINTMENT";
-
-export function addMonthOverview(monthOverview: MonthOverview): Action {
-    return {
-        type: ADD_MONTH_OVERVIEW,
-        payload: {monthOverview}
-    };
-}
 
 export function addAppointment(appointment: Appointment, day: Day): Action {
     return {
@@ -41,12 +34,6 @@ export function updateAppointment(appointment: Appointment, day: Day): Action {
     };
 }
 
-export function setEventsForMonth(month: number, events: Array<Appointment>): Action {
-    return {
-        type: SET_APPOINTMENTS_FOR_MONTH,
-        payload: {month, events}
-    };
-}
 export function setViewMode(viewMode: ViewMode): Action {
     return {
         type: SET_VIEWMODE,

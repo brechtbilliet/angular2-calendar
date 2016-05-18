@@ -4,10 +4,8 @@ import {
     SET_SELECTEDDAY,
     SET_SELECTEDWEEK,
     SET_SELECTEDMONTH,
-    ADD_MONTH_OVERVIEW,
     ADD_APPOINTMENT,
     UPDATE_APPOINTMENT,
-    SET_APPOINTMENTS_FOR_MONTH,
     REMOVE_APPOINTMENT,
     SET_VIEWMODE
 } from "./actions";
@@ -20,8 +18,6 @@ export const store = {
 
 function dataReducer(state: DataState = {monthOverviews: []}, action: Action): DataState {
     switch (action.type) {
-        case ADD_MONTH_OVERVIEW:
-        case SET_APPOINTMENTS_FOR_MONTH:
         case ADD_APPOINTMENT:
         case REMOVE_APPOINTMENT:
         case UPDATE_APPOINTMENT:
@@ -36,8 +32,6 @@ function dataReducer(state: DataState = {monthOverviews: []}, action: Action): D
 // Handles the array of months, if a single action should be taken on a month, it delegates the action to the montOverviewReducer
 function monthOverviewsReducer(state: Array<MonthOverview> = [], action: Action): Array<MonthOverview> {
     switch (action.type) {
-        case ADD_MONTH_OVERVIEW:
-            return [...state, action.payload.monthOverview];
         case ADD_APPOINTMENT:
         case UPDATE_APPOINTMENT:
         case REMOVE_APPOINTMENT:
