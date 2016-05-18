@@ -82,9 +82,6 @@ export class CalendarModel {
                 return overview.year === appointmentMoment.year() && overview.month === appointmentMoment.month();
             }).length > 0;
         if (!monthOverviewExists) {
-            // let dayWithAppointments = new DayWithAppointments(day, [appointment]);
-            // let monthOverview = new MonthOverview(day.year, day.month, [dayWithAppointments]);
-            // this.store.dispatch(addMonthOverview(monthOverview));
             this.store.dispatch(addAppointment(appointment, day));
         } else {
             this.store.dispatch(addAppointment(appointment, day));
