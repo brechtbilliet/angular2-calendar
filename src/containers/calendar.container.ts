@@ -64,7 +64,7 @@ export class Calendar implements OnInit {
                 daysWithAppointments.push(...matchingDays);
             });
             return new WeekOverview(selectedWeek.year, selectedWeek.week, daysWithAppointments);
-        });
+        }); 
 
     public dayOverview$: Observable<DayWithAppointments> = Observable.combineLatest(this.allMonthOverviews$, this.selectedDay$,
         (monthOverviews: Array<MonthOverview>, selectedDay: Day) => {
