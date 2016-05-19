@@ -27,9 +27,8 @@ function monthOverviewsReducer(state: Array<MonthOverview> = [], action: Action)
         case ADD_APPOINTMENT:
         case UPDATE_APPOINTMENT:
         case REMOVE_APPOINTMENT:
-            let output: Array<MonthOverview>;
             let found: boolean = false;
-            output = state.map((monthOverview: MonthOverview) => {
+            let output: Array<MonthOverview> = state.map((monthOverview: MonthOverview) => {
                 if (monthOverview.month === action.payload.day.month && monthOverview.year === action.payload.day.year) {
                     found = true;
                     return monthOverviewReducer(monthOverview, action);
@@ -38,9 +37,8 @@ function monthOverviewsReducer(state: Array<MonthOverview> = [], action: Action)
             });
             // if it's not found, we must create a new one
             if (!found) {
-                let monthOverview: MonthOverview = new MonthOverview(action.payload.day.year, action.payload.day.month, []);
                 output = [...state,
-                    monthOverviewReducer(monthOverview, action)];
+                    monthOverviewReducer(new MonthOverview(action.payload.day.year, action.payload.day.month, []), action)];
             }
             return output;
         default:
@@ -55,8 +53,7 @@ function monthOverviewReducer(state: MonthOverview, action: Action): MonthOvervi
         case ADD_APPOINTMENT:
         case UPDATE_APPOINTMENT:
         case REMOVE_APPOINTMENT:
-            state.daysWithAppointments = dayWithAppointmentsReducer(state.daysWithAppointments, action);
-            return state;
+            return new MonthOverview(state.year, state.month, dayWithAppointmentsReducer(state.daysWithAppointments, action));
         default:
             return state;
     }
@@ -67,9 +64,8 @@ function dayWithAppointmentsReducer(state: Array<DayWithAppointments> = [], acti
         case REMOVE_APPOINTMENT:
         case ADD_APPOINTMENT:
         case UPDATE_APPOINTMENT:
-            let output: Array<DayWithAppointments>;
             let found: boolean = false;
-            output = state.map((dayWithAppointments: DayWithAppointments) => {
+            let output: Array<DayWithAppointments> = state.map((dayWithAppointments: DayWithAppointments) => {
                 if (dayWithAppointments.day.day === action.payload.day.day) {
                     found = true;
                     return dayWithAppointmentReducer(dayWithAppointments, action);
@@ -77,9 +73,8 @@ function dayWithAppointmentsReducer(state: Array<DayWithAppointments> = [], acti
                 return dayWithAppointments;
             });
             if (!found) {
-                let dayWithAppointment: DayWithAppointments = new DayWithAppointments(action.payload.day, []);
                 output = [...state,
-                    dayWithAppointmentReducer(dayWithAppointment, action)];
+                    dayWithAppointmentReducer(new DayWithAppointments(action.payload.day, []), action)];
             }
             return output;
         default:
@@ -91,14 +86,12 @@ function dayWithAppointmentsReducer(state: Array<DayWithAppointments> = [], acti
 function dayWithAppointmentReducer(state: DayWithAppointments, action: Action): DayWithAppointments {
     switch (action.type) {
         case REMOVE_APPOINTMENT:
-            let temp: any = {
+            return {
                 day: state.day,
                 appointments: state.appointments.filter((appointment: Appointment) => {
                     return appointment.id !== action.payload.id;
                 })
             };
-            console.log(temp);
-            return temp;
         case ADD_APPOINTMENT:
             return {
                 day: state.day,
