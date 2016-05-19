@@ -38,7 +38,15 @@ function monthOverviewsReducer(state: Array<MonthOverview> = [], action: Action)
             // if it's not found, we must create a new one
             if (!found) {
                 output = [...state,
-                    monthOverviewReducer(new MonthOverview(action.payload.day.year, action.payload.day.month, []), action)];
+                    monthOverviewReducer(
+                        {
+                            year: action.payload.day.year,
+                            month: action.payload.day.month,
+                            daysWithAppointments: []
+                        },
+                        action
+                    )
+                ];
             }
             return output;
         default:
@@ -53,7 +61,11 @@ function monthOverviewReducer(state: MonthOverview, action: Action): MonthOvervi
         case ADD_APPOINTMENT:
         case UPDATE_APPOINTMENT:
         case REMOVE_APPOINTMENT:
-            return new MonthOverview(state.year, state.month, dayWithAppointmentsReducer(state.daysWithAppointments, action));
+            return {
+                year: state.year,
+                month: state.month,
+                daysWithAppointments: dayWithAppointmentsReducer(state.daysWithAppointments, action)
+            };
         default:
             return state;
     }
@@ -74,7 +86,14 @@ function dayWithAppointmentsReducer(state: Array<DayWithAppointments> = [], acti
             });
             if (!found) {
                 output = [...state,
-                    dayWithAppointmentReducer(new DayWithAppointments(action.payload.day, []), action)];
+                    dayWithAppointmentReducer(
+                        {
+                            day: action.payload.day,
+                            appointments: []
+                        },
+                        action
+                    )
+                ];
             }
             return output;
         default:
