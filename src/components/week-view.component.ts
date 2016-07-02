@@ -10,14 +10,14 @@ import {DayDetail} from "./day-detail.component";
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <h1>Overview of week: {{(overview$|async)?.week}}/{{(overview$|async)?.year}}</h1>
-        
+
         <table class="table">
             <thead>
                 <tr>
                     <th>Sunday</th>
                     <th>Monday</th>
                     <th>Tuesday</th>
-                    <th>Wensday</th>
+                    <th>Wednesday</th>
                     <th>Thursday</th>
                     <th>Friday</th>
                     <th>Saturday</th>
